@@ -85,12 +85,36 @@ PONT inserir(PONT raiz, int valor) {
 //------------------------------------------------------------------------------
 // 5) Remover UMA ocorrência
 PONT removerUmaOcorrencia(PONT raiz, int valor) {
-  // COMPLETAR
-  // 1) Buscar nó do valor:
-  //    - se não achar, não faz nada
-  // 2) se achar e contador>1 => decrementa
-  // 3) se contador==1 => remoção clássica de BST (casos 0,1,2 filhos)
-  return raiz; // provisório
+  if(raiz==NULL){
+    return raiz;
+  }
+  if(valor < raiz->chave){
+    raiz->esq= removerUmaOcorrencia(raiz->esq, valor);
+  }else if(valor > raiz-> chave){
+    raiz-> dir = removerUmaOcorrencia(raiz->esq, valor);
+  }else{
+    if(raiz->contador > 1){
+      raiz->contador--;
+  }else {
+    if(raiz->esq ==NULL){
+      PONT temp = raiz->dir;
+      free(raiz);
+      return temp;  
+    } 
+    else if(raiz->dir == NULL){
+      PONT temp = raiz->esq;
+      free(raiz);
+      return temp;
+    }
+    PONT temp = raiz->dir;
+    while(temp->esq != NULL){
+      temp =temp ->esq;
+    }
+    raiz->chave = temp->chave;
+    raiz->contador = temp->contador;
+    raiz->dir = removerUmaOcorrencia(raiz->dir, temp->chave);
+  }
+  return raiz;
 }
 
 //------------------------------------------------------------------------------
@@ -135,9 +159,7 @@ int contarTotalElementos(PONT raiz) {
   {
     return raiz->contador + contarTotalElementos(raiz->esq) + contarTotalElementos(raiz->dir);
   } 
-  // COMPLETAR
-  // soma = raiz->contador + subárvores
-  return 0; // provisório
+  return 0; 
 }
 
 //------------------------------------------------------------------------------
