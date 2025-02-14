@@ -79,11 +79,6 @@ PONT inserir(PONT raiz, int valor) {
     }else {
       raiz->contador++;
     }
-  // COMPLETAR
-  // Se raiz == NULL => cria nó
-  // Se valor < raiz->chave => raiz->esq = inserir(raiz->esq, valor)
-  // Se valor > raiz->chave => raiz->dir = inserir(raiz->dir, valor)
-  // Se valor == raiz->chave => incrementa raiz->contador
   return raiz; // provisório
 }
 
@@ -111,22 +106,35 @@ PONT removerTodasOcorrencias(PONT raiz, int valor) {
 //------------------------------------------------------------------------------
 // 7) Exibir InOrder
 void exibirInOrder(PONT raiz) {
-  // COMPLETAR
-  // Percurso InOrder: esq -> (raiz->chave impresso contador vezes) -> dir
+  if(raiz != NULL) {
+    exibirInOrder(raiz->esq);
+    for(int i = 0; i< raiz->contador; i++) {
+      printf("%d ", raiz->chave);
+    }
+    exibirInOrder(raiz->dir);
+  }
+  
 }
 
 //------------------------------------------------------------------------------
 // 8) Contar nós distintos
 int contarNos(PONT raiz) {
-  // COMPLETAR
-  // Se raiz==NULL => 0
-  // Senao => 1 + contarNos(esq) + contarNos(dir)
-  return 0; // provisório
+  if(raiz == NULL) {
+    return 0; // Se raiz==NULL => 0
+  }
+  return 1 + contarNos(raiz->esq) + contarNos(raiz->dir);// Senao => 1 + contarNos(esq) + contarNos(dir)
 }
 
 //------------------------------------------------------------------------------
 // 9) Contar total de elementos (somando contadores)
 int contarTotalElementos(PONT raiz) {
+  if (raiz == NULL){
+    return 0;
+  } 
+  else
+  {
+    return raiz->contador + contarTotalElementos(raiz->esq) + contarTotalElementos(raiz->dir);
+  } 
   // COMPLETAR
   // soma = raiz->contador + subárvores
   return 0; // provisório
