@@ -1,29 +1,21 @@
 
-//EP: Árvore Binária de Busca (BST)
-//Professor Anderson Ávila - UEL
-//Descrição: Completar as funções solicitadas, sem alterar suas assinaturas.
-
-//A main() contém testes que exibem resultados esperados como comentário.
-//Quando as funções estiverem corretamente implementadas, esses testes
-//devem produzir a saída indicada.
-//*/
 
 #include <stdio.h>
 #include <stdlib.h>
 
-// Estrutura do nó
 typedef struct no {
   int chave;
-  int contador;           // número de cópias (frequência) dessa chave
-  struct no* esq;         // ponteiro para subárvore esquerda
-  struct no* dir;         // ponteiro para subárvore direita
+  int contador;
+  struct no* esq;         
+  struct no* dir;        
 } NO, *PONT;
 
-// Protótipos das funções
+
 void inicializar(PONT* raiz);
 PONT criarNo(int valor);
 PONT inserir(PONT raiz, int valor);
 PONT removerUmaOcorrencia(PONT raiz, int valor);
+PONT lowestCommonAncestor(PONT raiz, int val1, int val2);
 PONT removerTodasOcorrencias(PONT raiz, int valor);
 PONT buscar(PONT raiz, int valor);
 void exibirInOrder(PONT raiz);
@@ -31,16 +23,14 @@ int contarNos(PONT raiz);
 int contarTotalElementos(PONT raiz);
 int kEsimoMenor(PONT raiz, int k);
 void imprimirIntervalo(PONT raiz, int min, int max);
-// (Opcional) PONT lowestCommonAncestor(PONT raiz, int val1, int val2);
 
-//------------------------------------------------------------------------------
-// 1) Inicializar
+
+
 void inicializar(PONT* raiz) {
   *raiz = NULL;
 }
 
-//------------------------------------------------------------------------------
-// 2) Criar nó
+
 PONT criarNo(int valor) {
   PONT novo = (PONT) malloc(sizeof(NO));
   if(novo) {
@@ -52,8 +42,7 @@ PONT criarNo(int valor) {
   return novo;
 }
 
-//------------------------------------------------------------------------------
-// 3) Buscar
+
 PONT buscar(PONT raiz, int valor) {
     if (raiz==  NULL || raiz-> chave == valor){
         return raiz;
@@ -66,8 +55,6 @@ PONT buscar(PONT raiz, int valor) {
   return NULL; 
 }
 
-//------------------------------------------------------------------------------
-// 4) Inserir
 PONT inserir(PONT raiz, int valor) {
   if(raiz == NULL) {
     raiz = criarNo(valor);
@@ -82,8 +69,7 @@ PONT inserir(PONT raiz, int valor) {
   return raiz; // provisório
 }
 
-//------------------------------------------------------------------------------
-// 5) Remover UMA ocorrência
+
 PONT removerUmaOcorrencia(PONT raiz, int valor) {
   if(raiz==NULL){
     return raiz;
@@ -117,40 +103,40 @@ PONT removerUmaOcorrencia(PONT raiz, int valor) {
   return raiz;
 }
 
-//------------------------------------------------------------------------------
-// 6) Remover TODAS ocorrências
+
 PONT removerTodasOcorrencias(PONT raiz, int valor) {
-  if(raiz==NULL){
-    return raiz;
-  }
-  if(valor < raiz->chave){
-    raiz->esq= removerTodasOcorrencias(raiz->esq, valor);
-  }else if(valor > raiz-> chave){
-    raiz-> dir = removerTodosOcorrencias(raiz->esq, valor);
-  } else {
-      if(raiz->esq == NULL){
+  if (raiz == NULL) {
+        return raiz;
+    }
+    if (valor < raiz->chave) {
+        raiz->esq = removerTodasOcorrencias(raiz->esq, valor);
+    } else if (valor > raiz->chave) {
+        raiz->dir = removerTodasOcorrencias(raiz->dir, valor);
+    } else {
+        if (raiz->esq == NULL) {
+            PONT temp = raiz->dir;
+            free(raiz);
+            return temp;
+        } else if (raiz->dir == NULL) {
+            PONT temp = raiz->esq;
+            free(raiz);
+            return temp;
+        }
         PONT temp = raiz->dir;
-        free(raiz);
-        return temp;
-      } 
-      else if(raiz->dir == NULL){
-        PONT temp = raiz->esq;
-        free(raiz);
-        return temp;
-      }
-      PONT temp = raiz->dir;
-      while(temp->esq != NULL){
-        temp = temp->esq;
-      }
-      raiz->chave = temp->chave;
-      raiz->contador = temp->contador;
-      raiz->dir = removerTodasOcorrencias(raiz->dir, temp->chave);
+        while (temp->esq != NULL) {
+            temp = temp->esq;
+        }
+        raiz->chave = temp->chave;
+        raiz->contador = temp->contador;
+        raiz->dir = removerTodasOcorrencias(raiz->dir, temp->chave);
     }
     return raiz;
 }
 
-//------------------------------------------------------------------------------
-// 7) Exibir InOrder
+
+
+
+
 void exibirInOrder(PONT raiz) {
   if(raiz != NULL) {
     exibirInOrder(raiz->esq);
@@ -162,17 +148,15 @@ void exibirInOrder(PONT raiz) {
   
 }
 
-//------------------------------------------------------------------------------
-// 8) Contar nós distintos
+
 int contarNos(PONT raiz) {
   if(raiz == NULL) {
-    return 0; // Se raiz==NULL => 0
+    return 0; 
   }
-  return 1 + contarNos(raiz->esq) + contarNos(raiz->dir);// Senao => 1 + contarNos(esq) + contarNos(dir)
+  return 1 + contarNos(raiz->esq) + contarNos(raiz->dir);
 }
 
-//------------------------------------------------------------------------------
-// 9) Contar total de elementos (somando contadores)
+
 int contarTotalElementos(PONT raiz) {
   if (raiz == NULL){
     return 0;
@@ -184,8 +168,7 @@ int contarTotalElementos(PONT raiz) {
   return 0; 
 }
 
-//------------------------------------------------------------------------------
-// 10) k-ésimo menor
+
 int kEsimoMenor(PONT raiz, int k) {
   if(raiz==NULL){
     return -1;
@@ -200,8 +183,7 @@ int kEsimoMenor(PONT raiz, int k) {
   }
 }
 
-//------------------------------------------------------------------------------
-// 11) Imprimir Intervalo [min, max]
+
 void imprimirIntervalo(PONT raiz, int min, int max) {
   if (raiz== NULL){
     return;
@@ -219,7 +201,7 @@ void imprimirIntervalo(PONT raiz, int min, int max) {
   }
 }
 
-//------------------------------------------------------------------------------
+
 
 PONT lowestCommonAncestor(PONT raiz, int val1, int val2) {
   if(raiz == NULL){
@@ -235,8 +217,7 @@ PONT lowestCommonAncestor(PONT raiz, int val1, int val2) {
 }
 
 
-//------------------------------------------------------------------------------
-// main() para testes com expectativas de resultado
+
 int main() {
   // PONT raiz;                    // ponteiro para a raiz da BST
   // inicializar(&raiz);           // deixa a árvore vazia
