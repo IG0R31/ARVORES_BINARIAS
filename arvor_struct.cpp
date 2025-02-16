@@ -219,52 +219,30 @@ PONT lowestCommonAncestor(PONT raiz, int val1, int val2) {
 
 
 int main() {
-  // PONT raiz;                    // ponteiro para a raiz da BST
-  // inicializar(&raiz);           // deixa a árvore vazia
+   PONT raiz;                    // ponteiro para a raiz da BST
+   inicializar(&raiz);           // deixa a árvore vazia
   // 
-  // As funções a serem implementadas:
-  //   - criarNo
-  //   - inserir
-  //   - removerUmaOcorrencia
-  //   - removerTodasOcorrencias
-  //   - buscar
-  //   - exibirInOrder
-  //   - contarNos
-  //   - contarTotalElementos
-  //   - kEsimoMenor
-  //   - imprimirIntervalo
-  //   - lowestCommonAncestor
+  raiz = inserir(raiz, 10);
+  raiz = inserir(raiz, 5);
+  raiz = inserir(raiz, 15);
+  raiz = inserir(raiz, 10);
+  raiz = inserir(raiz, 5);
+  raiz = inserir(raiz, 5);
+  raiz = inserir(raiz, 18);
+   
 
-  PONT raiz;
-  inicializar(&raiz);
+  printf("In-Order: ");
+  exibirInOrder(raiz);
+  printf("\n");
 
-  // -------------------------------------------------------
-  // 1) Inserção com valores repetidos
-  //    Esperado que:
-  //      - nó 10 tenha contador=2
-  //      - nó 5  tenha contador=3
-  //      - nó 15 tenha contador=1
-  //      - nó 18 tenha contador=1
-  //
-  // InOrder final esperado (antes de quaisquer remoções):
-  //     "5 5 5 10 10 15 18"
-  //
-  inserir(raiz, 10); 
-  inserir(raiz, 5);
-  inserir(raiz, 15);
-  inserir(raiz, 10); // repetido => contador(10)++
-  inserir(raiz, 5);  // repetido => contador(5)++
-  inserir(raiz, 5);  // repetido => contador(5)++
-  inserir(raiz, 18);
 
-  printf("\n--- APÓS INSERIR (10,5,15,10,5,5,18) ---\n");
+
   printf("InOrder esperado: 5 5 5 10 10 15 18\n");
   printf("InOrder obtido:   ");
   exibirInOrder(raiz); 
   printf("\n");
 
-  // -------------------------------------------------------
-  // 2) Busca por valores
+
   PONT node5 = buscar(raiz, 5);
   if(node5) {
       printf("\nBuscar(5): encontrado com contador=%d (esperado=3)\n", node5->contador);
