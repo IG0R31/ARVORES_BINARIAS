@@ -57,52 +57,51 @@ PONT buscar(PONT raiz, int valor) {
 
 PONT inserir(PONT raiz, int valor) {
   if(raiz == NULL) {
-    raiz = criarNo(valor);
+    return criarNo(valor);
   }
   if (valor< raiz->chave) {
-    raiz->esq== inserir(raiz->esq, valor);
+    raiz->esq = inserir(raiz->esq, valor);
     }else if (valor > raiz->chave) {
       raiz->dir = inserir(raiz->dir, valor);
     }else {
       raiz->contador++;
     }
-  return raiz; // provisório
-}
-
-
-PONT removerUmaOcorrencia(PONT raiz, int valor) {
-  if(raiz==NULL){
-    return raiz;
-  }
-  if(valor < raiz->chave){
-    raiz->esq= removerUmaOcorrencia(raiz->esq, valor);
-  }else if(valor > raiz-> chave){
-    raiz-> dir = removerUmaOcorrencia(raiz->esq, valor);
-  }else{
-    if(raiz->contador > 1){
-      raiz->contador--;
-  }else {
-    if(raiz->esq ==NULL){
-      PONT temp = raiz->dir;
-      free(raiz);
-      return temp;  
-    } 
-    else if(raiz->dir == NULL){
-      PONT temp = raiz->esq;
-      free(raiz);
-      return temp;
-    }
-    PONT temp = raiz->dir;
-    while(temp->esq != NULL){
-      temp =temp ->esq;
-    }
-    raiz->chave = temp->chave;
-    raiz->contador = temp->contador;
-    raiz->dir = removerUmaOcorrencia(raiz->dir, temp->chave);
-  }
   return raiz;
 }
 
+PONT removerUmaOcorrencia(PONT raiz, int valor) {
+    if (raiz == NULL) {
+        return raiz;
+    }
+    if (valor < raiz->chave) {
+        raiz->esq = removerUmaOcorrencia(raiz->esq, valor);
+    } else if (valor > raiz->chave) {
+        raiz->dir = removerUmaOcorrencia(raiz->dir, valor); 
+    } else {
+        if (raiz->contador > 1) {
+            raiz->contador--; 
+        } else {
+            if (raiz->esq == NULL) {
+                PONT temp = raiz->dir;
+                free(raiz);
+                return temp;
+            } else if (raiz->dir == NULL) {
+                PONT temp = raiz->esq;
+                free(raiz);
+                return temp;
+            }
+            
+            PONT temp = raiz->dir;
+            while (temp->esq != NULL) {
+                temp = temp->esq;
+            }
+            raiz->chave = temp->chave;
+            raiz->contador = temp->contador;
+            raiz->dir = removerUmaOcorrencia(raiz->dir, temp->chave); // Remove o sucessor
+        }
+    }
+    return raiz; 
+}
 
 PONT removerTodasOcorrencias(PONT raiz, int valor) {
   if (raiz == NULL) {
@@ -160,12 +159,9 @@ int contarNos(PONT raiz) {
 int contarTotalElementos(PONT raiz) {
   if (raiz == NULL){
     return 0;
-  } 
-  else
-  {
+  }else{
     return raiz->contador + contarTotalElementos(raiz->esq) + contarTotalElementos(raiz->dir);
-  } 
-  return 0; 
+  }  
 }
 
 
@@ -196,7 +192,7 @@ void imprimirIntervalo(PONT raiz, int min, int max) {
       printf("%d ", raiz->chave);
     }
   }
-  if(rauz-> chave <max){
+  if(raiz-> chave <max){
     imprimirIntervalo(raiz-> dir, min, max);
   }
 }
@@ -208,7 +204,7 @@ PONT lowestCommonAncestor(PONT raiz, int val1, int val2) {
     return NULL;
   }
   if(raiz->chave >val1 && raiz->chave > val2){
-    return lowestommonAncestor(raiz->esq, val1, val2);
+    return lowestCommonAncestor(raiz->esq, val1, val2);
   }
   if(raiz->chave < val1 && raiz->chave <val2){
     return lowestCommonAncestor(raiz->dir, val1, val2);
@@ -219,39 +215,45 @@ PONT lowestCommonAncestor(PONT raiz, int val1, int val2) {
 
 
 int main() {
-   PONT raiz;                    // ponteiro para a raiz da BST
-   inicializar(&raiz);           // deixa a árvore vazia
-  // 
-  raiz = inserir(raiz, 10);
+  PONT raiz;
+  inicializar(&raiz);
+
+  // -------------------------------------------------------
+  // 1) Inserção com valores repetidos
+  //    Esperado que:
+  //      - nó 10 tenha contador=2
+  //      - nó 5  tenha contador=3
+  //      - nó 15 tenha contador=1
+  //      - nó 18 tenha contador=1
+  //
+  // InOrder final esperado (antes de quaisquer remoções):
+  //     "5 5 5 10 10 15 18"
+  //
+  raiz = inserir(raiz, 10); 
   raiz = inserir(raiz, 5);
   raiz = inserir(raiz, 15);
-  raiz = inserir(raiz, 10);
-  raiz = inserir(raiz, 5);
-  raiz = inserir(raiz, 5);
+  raiz = inserir(raiz, 10); // repetido => contador(10)++
+  raiz = inserir(raiz, 5);  // repetido => contador(5)++
+  raiz = inserir(raiz, 5);  // repetido => contador(5)++
   raiz = inserir(raiz, 18);
-   
 
-  printf("In-Order: ");
-  exibirInOrder(raiz);
-  printf("\n");
-
-
-
+  printf("\n--- APÓS INSERIR (10,5,15,10,5,5,18) ---\n");
   printf("InOrder esperado: 5 5 5 10 10 15 18\n");
   printf("InOrder obtido:   ");
   exibirInOrder(raiz); 
   printf("\n");
 
-
+  // -------------------------------------------------------
+  // 2) Busca por valores
   PONT node5 = buscar(raiz, 5);
-  if(node5) {
+  if (node5) {
       printf("\nBuscar(5): encontrado com contador=%d (esperado=3)\n", node5->contador);
   } else {
       printf("\nBuscar(5): não encontrado (inesperado)\n");
   }
 
   PONT nodeX = buscar(raiz, 999); // valor não existente
-  if(!nodeX) {
+  if (!nodeX) {
       printf("Buscar(999): não encontrado (esperado)\n");
   } else {
       printf("Buscar(999): encontrado??? (inesperado)\n");
@@ -260,7 +262,7 @@ int main() {
   // -------------------------------------------------------
   // 3) Remover UMA ocorrência 
   //    removerUmaOcorrencia(5) => contador(5) deve passar de 3 para 2
-  removerUmaOcorrencia(raiz, 5);
+  raiz = removerUmaOcorrencia(raiz, 5);
 
   printf("\n--- APÓS removerUmaOcorrencia(5) ---\n");
   printf("Esperado InOrder: 5 5 10 10 15 18\n");
@@ -269,14 +271,14 @@ int main() {
   printf("\n");
 
   node5 = buscar(raiz, 5);
-  if(node5) {
+  if (node5) {
       printf("Agora contador(5)=%d (esperado=2)\n", node5->contador);
   }
 
   // -------------------------------------------------------
   // 4) Remover TODAS ocorrências
   //    removerTodasOcorrencias(10) => remove nó com chave=10 por completo
-  removerTodasOcorrencias(raiz, 10);
+  raiz = removerTodasOcorrencias(raiz, 10);
 
   printf("\n--- APÓS removerTodasOcorrencias(10) ---\n");
   printf("Esperado InOrder: 5 5 15 18\n");
@@ -303,11 +305,11 @@ int main() {
   //       k=4 => 18
   //       k=5 => -1 (não existe)
   printf("\n--- Teste k-ésimo menor ---\n");
-  printf("k=1 => %d (esperado=5)\n", kEsimoMenor(raiz,1));
-  printf("k=2 => %d (esperado=5)\n", kEsimoMenor(raiz,2));
-  printf("k=3 => %d (esperado=15)\n", kEsimoMenor(raiz,3));
-  printf("k=4 => %d (esperado=18)\n", kEsimoMenor(raiz,4));
-  printf("k=5 => %d (esperado=-1)\n", kEsimoMenor(raiz,5));
+  printf("k=1 => %d (esperado=5)\n", kEsimoMenor(raiz, 1));
+  printf("k=2 => %d (esperado=5)\n", kEsimoMenor(raiz, 2));
+  printf("k=3 => %d (esperado=15)\n", kEsimoMenor(raiz, 3));
+  printf("k=4 => %d (esperado=18)\n", kEsimoMenor(raiz, 4));
+  printf("k=5 => %d (esperado=-1)\n", kEsimoMenor(raiz, 5));
 
   // -------------------------------------------------------
   // 7) imprimirIntervalo [6..18]
@@ -331,9 +333,9 @@ int main() {
   //              12(1) 18(1)
   //                  \
   //                  16(1)
-  inserir(raiz, 12);
-  inserir(raiz, 16);
-  inserir(raiz, 3);
+  raiz = inserir(raiz, 12);
+  raiz = inserir(raiz, 16);
+  raiz = inserir(raiz, 3);
 
   printf("\n--- Árvore após inserir(12,16,3) ---\n");
   printf("InOrder esperado: 3 5 5 12 15 16 18\n");
@@ -357,28 +359,28 @@ int main() {
   PONT nLCA;
 
   nLCA = lowestCommonAncestor(raiz, 3, 5);
-  if(nLCA) {
+  if (nLCA) {
       printf("\nLCA(3,5) => chave=%d (esperado=5)\n", nLCA->chave);
   }
 
   nLCA = lowestCommonAncestor(raiz, 3, 12);
-  if(nLCA) {
+  if (nLCA) {
       printf("LCA(3,12) => chave=%d (esperado=5)\n", nLCA->chave);
   }
 
   nLCA = lowestCommonAncestor(raiz, 16, 18);
-  if(nLCA) {
+  if (nLCA) {
       printf("LCA(16,18) => chave=%d (esperado=15)\n", nLCA->chave);
   }
 
   nLCA = lowestCommonAncestor(raiz, 5, 18);
-  if(nLCA) {
+  if (nLCA) {
       printf("LCA(5,18) => chave=%d (esperado=5)\n", nLCA->chave);
   }
 
   // Por fim, buscar um LCA com valor inexistente
   nLCA = lowestCommonAncestor(raiz, 100, 3);
-  if(!nLCA) {
+  if (!nLCA) {
       printf("LCA(100,3) => NULL (esperado=chave nao existe)\n");
   }
 
