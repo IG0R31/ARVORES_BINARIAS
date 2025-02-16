@@ -218,23 +218,13 @@ int main() {
   PONT raiz;
   inicializar(&raiz);
 
-  // -------------------------------------------------------
-  // 1) Inserção com valores repetidos
-  //    Esperado que:
-  //      - nó 10 tenha contador=2
-  //      - nó 5  tenha contador=3
-  //      - nó 15 tenha contador=1
-  //      - nó 18 tenha contador=1
-  //
-  // InOrder final esperado (antes de quaisquer remoções):
-  //     "5 5 5 10 10 15 18"
-  //
+ 
   raiz = inserir(raiz, 10); 
   raiz = inserir(raiz, 5);
   raiz = inserir(raiz, 15);
-  raiz = inserir(raiz, 10); // repetido => contador(10)++
-  raiz = inserir(raiz, 5);  // repetido => contador(5)++
-  raiz = inserir(raiz, 5);  // repetido => contador(5)++
+  raiz = inserir(raiz, 10);
+  raiz = inserir(raiz, 5);  
+  raiz = inserir(raiz, 5);  
   raiz = inserir(raiz, 18);
 
   printf("\n--- APÓS INSERIR (10,5,15,10,5,5,18) ---\n");
@@ -243,8 +233,7 @@ int main() {
   exibirInOrder(raiz); 
   printf("\n");
 
-  // -------------------------------------------------------
-  // 2) Busca por valores
+
   PONT node5 = buscar(raiz, 5);
   if (node5) {
       printf("\nBuscar(5): encontrado com contador=%d (esperado=3)\n", node5->contador);
@@ -259,9 +248,7 @@ int main() {
       printf("Buscar(999): encontrado??? (inesperado)\n");
   }
 
-  // -------------------------------------------------------
-  // 3) Remover UMA ocorrência 
-  //    removerUmaOcorrencia(5) => contador(5) deve passar de 3 para 2
+
   raiz = removerUmaOcorrencia(raiz, 5);
 
   printf("\n--- APÓS removerUmaOcorrencia(5) ---\n");
@@ -275,9 +262,7 @@ int main() {
       printf("Agora contador(5)=%d (esperado=2)\n", node5->contador);
   }
 
-  // -------------------------------------------------------
-  // 4) Remover TODAS ocorrências
-  //    removerTodasOcorrencias(10) => remove nó com chave=10 por completo
+
   raiz = removerTodasOcorrencias(raiz, 10);
 
   printf("\n--- APÓS removerTodasOcorrencias(10) ---\n");
@@ -286,24 +271,13 @@ int main() {
   exibirInOrder(raiz);
   printf("\n");
 
-  // -------------------------------------------------------
-  // 5) Contagem de nós e total de elementos
-  //    Árvores resultante: {5(cont=2), 15(cont=1), 18(cont=1)}
-  //      => contarNos=3   (chaves distintas: 5,15,18)
-  //      => contarTotalElementos=4   (5,5,15,18)
+
   int qtdNos = contarNos(raiz);
   int totalElem = contarTotalElementos(raiz);
   printf("\ncontarNos => %d (esperado=3)\n", qtdNos);
   printf("contarTotalElementos => %d (esperado=4)\n", totalElem);
 
-  // -------------------------------------------------------
-  // 6) k-ésimo menor (considerando contadores)
-  //    InOrder real: [5,5,15,18]
-  //       k=1 => 5
-  //       k=2 => 5
-  //       k=3 => 15
-  //       k=4 => 18
-  //       k=5 => -1 (não existe)
+
   printf("\n--- Teste k-ésimo menor ---\n");
   printf("k=1 => %d (esperado=5)\n", kEsimoMenor(raiz, 1));
   printf("k=2 => %d (esperado=5)\n", kEsimoMenor(raiz, 2));
@@ -311,28 +285,13 @@ int main() {
   printf("k=4 => %d (esperado=18)\n", kEsimoMenor(raiz, 4));
   printf("k=5 => %d (esperado=-1)\n", kEsimoMenor(raiz, 5));
 
-  // -------------------------------------------------------
-  // 7) imprimirIntervalo [6..18]
-  //    InOrder da árvore: 5,5,15,18
-  //    Filtrando [6..18], esperamos: 15 18
+
   printf("\n--- Teste imprimirIntervalo [6..18] ---\n");
   printf("Esperado: 15 18\nObtido:   ");
   imprimirIntervalo(raiz, 6, 18);
   printf("\n");
 
-  // -------------------------------------------------------
-  // 8) Testar LCA (lowestCommonAncestor) - não é opcional
-  //    Vamos inserir mais alguns valores para teste de LCA
-  //    Situação final da árvore atual: 5(cont=2),15(cont=1),18(cont=1)
-  //    Inserir(12), Inserir(16), Inserir(3)
-  //    Nova BST (com contadores):
-  //       5 (cont=2)
-  //           /    \
-  //         3(1)   15(1)
-  //                /  \
-  //              12(1) 18(1)
-  //                  \
-  //                  16(1)
+
   raiz = inserir(raiz, 12);
   raiz = inserir(raiz, 16);
   raiz = inserir(raiz, 3);
@@ -343,18 +302,6 @@ int main() {
   exibirInOrder(raiz);
   printf("\n");
 
-  // LCA tests:
-  //  LCA(3,5) -> 5 ou 3? 
-  //     - 3 e 5 estão ambos na subárvore da raiz=5? 
-  //     - Se a raiz é 5, e 3<5 => esq 
-  //       => LCA(3,5) deve ser 5, mas depende da estrutura exata
-  //  LCA(3,12) -> 5
-  //  LCA(16,18) -> 16 ou 15? 
-  //     => Analisando: 16 < 18 => 16 deve estar na subárvore direita(15)
-  //        -> 15 < 16 => goes right => 18
-  //        => 16 < 18 => subárvore esquerda de 18
-  //        => LCA deve ser 15 ou 18? Precisamos verificar a implementação.
-  //  LCA(5,18) -> 5 (pois 5 é raiz, e 18 está à direita)
 
   PONT nLCA;
 
